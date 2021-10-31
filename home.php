@@ -4,7 +4,7 @@ session_start();
 include_once './controller/sessions.php';
 
 
-// Check if the user is logged in, if not then redirect him to login page (loing.phpl)
+// Check if the user is logged in, if not then redirect him to login page (login.php)
 if(!isset($_SESSION["userId"]) || $_SESSION["userId"] != true){
     header("location: index.php");
     exit;
@@ -12,22 +12,21 @@ if(!isset($_SESSION["userId"]) || $_SESSION["userId"] != true){
 else {
     include './controller/user_data.php';
 ?>
- 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>User Profile</title>
-<link rel="stylesheet" 
-href=https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css >
+<link rel="stylesheet" href=https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css >
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <style>
     .page-style{
-        margin: 20px;        
+        margin: 20px;
     }
 </style>
 </head>
@@ -42,11 +41,30 @@ href=https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css >
                 <h4>Welcome to our E-Commerce Site.</h4>
             </div>
             <div class="m-auto">
-                
-                </div>
-                <p>
-                    <a href="logout.php" class="btn btn-danger ">Sign Out of Your Account</a>
-                </p>
+                <table class="table table-hover table-dark">
+                    <?php
+/*                    echo "<tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Photo</th>
+                        <th>Key</th>
+                      </tr>";
+                    foreach ($user_list as $item){
+                        echo "<tr>
+                        <td>$item</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                            </tr>";
+                    }
+                */?>
+                </table>
+            </div>
+            <p>
+                <a href="logout.php" class="btn btn-danger ">Sign Out of Your Account</a>
+            </p>
             </div>
         </div>
 </body>

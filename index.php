@@ -1,6 +1,8 @@
 <?php
 // Initialize the session
 session_start();
+//require_once './config.php';
+//require_once './vendor/autoload.php';
 include_once './controller/sessions.php';
 if(@$_SESSION["userId"]){
     header("location: home.php");
@@ -75,7 +77,7 @@ if(@$_SESSION["userId"]){
                                 </strong>
                             </p>
                             <div class="form-group">
-                            <label for=""class="text-muted"> <strong>Two Factor Authentication code:</strong> </label>
+                            <label for="" class="text-muted"> <strong>Two Factor Authentication code:</strong> </label>
                             <input type="hidden" name="uId" id="uId">
                             <input type="text" class="form-control" maxlength="6" name="sCodeIn" id="sCodeIn" aria-describedby="emailHelpId" placeholder="Enter Otp" required>
                             <input name="sCodeBt" id="sCodeBt" class="btn btn-primary" type="submit" value="Verify Code">

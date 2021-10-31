@@ -10,13 +10,11 @@
     $user = new user($db);
     $user->email = $_SESSION['userId'];
     $result = $user->select_user();
+    //$user_list = $user->select_users();
     if(!@$result){
         echo "something went wrong";
         session_destroy();
         header("location: login.php");
-
         die();
-        
-
     }
    

@@ -30,7 +30,7 @@ if($_POST){
         }
         
         //! Validate Password
-        if(strlen($pass1)<10){
+        if(strlen($pass1)<3){
             $errPass = "Minimum 10 characters.";
         }
         else{
@@ -49,7 +49,7 @@ if($_POST){
         //! gRecaptcha
         $url = "https://www.google.com/recaptcha/api/siteverify";
 		$data = [
-			'secret' => "secret_key",
+			'secret' => "6LfpowEdAAAAALbwY7G0Mzh7N-ow-4DVAMIXwIX1",
 			'response' => $_POST['token'],
 			// 'remoteip' => $_SERVER['REMOTE_ADDR']
 		];

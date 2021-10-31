@@ -87,7 +87,7 @@ else{
    
       var onloadCallback = function() {
     /*grecaptcha.render('gRecaptcha', {
-          'sitekey' : '6LfpowEdAAAAALbwY7G0Mzh7N-ow-4DVAMIXwIX1'
+          'sitekey' : 'site_key'
     });*/
           grecaptcha.ready(function(){
               grecaptcha.render("gRecaptcha", {

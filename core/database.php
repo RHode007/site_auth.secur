@@ -25,10 +25,8 @@ include '../libs/db_backup_import.php';
                         return $conn;
                     }
                 }else{
-                    //die("ERROR: Could not connect. " . $e->getMessage().(int)$e->getCode( ));
                     die(json_encode(array("message" => "ERROR: Could not connect. " . $e->getMessage()), JSON_THROW_ON_ERROR));
                 }
-                //throw new MyDbException( $e->getMessage( ) , (int)$e->getCode( ) );
             }
 
             return $conn;

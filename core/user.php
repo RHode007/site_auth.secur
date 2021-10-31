@@ -14,14 +14,12 @@
         //! Constructor with Db
         public function __construct($db)
         {
-            
             $this->conn=$db;
-            
         }
 
         //! Register User
         public function create_user(){
-            
+
             //! Create query
             $query ='INSERT INTO users (uFirstName,uLastName,uEmail, uPass) VALUES (:fName, :lName, :email, :pass)';
 
@@ -33,13 +31,13 @@
             $stmt->bindParam(':lName',$this->lName);
             $stmt->bindParam(':email',$this->email);
             $stmt->bindParam(':pass',$this->pass);
-            //! execute query 
+            //! execute query
             if($stmt->execute()){
                 return true;
-             }
-             else{
-                 return $stmt->error;
-             }
+            }
+            else{
+                return $stmt->error;
+            }
         }
 
         //! Check Mail Exist 
@@ -81,6 +79,19 @@
                 return false;
             }
         }
+
+       /* public function select_users(){
+            $query ='SELECT * FROM users';
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            if($result){
+                return $result;
+            }
+            else{
+                return false;
+            }
+        }*/
 
         //! insert otp
         public function insert_otp(){
