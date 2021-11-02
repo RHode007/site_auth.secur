@@ -2,7 +2,7 @@
 if($_POST){
     session_start();
     //! Set timezone 
-    date_default_timezone_set('Asia/Kolkata'); 
+    //date_default_timezone_set('Asia/Kolkata');
     
     include_once("../core/user.php");
     include_once("../core/database.php");
@@ -16,12 +16,13 @@ if($_POST){
     //! registration form
     if($_POST['action']=="registration"){
         //! getting data
-        $fName = htmlspecialchars(strip_tags($_POST['fName']));
-        $lName = htmlspecialchars(strip_tags($_POST['lName']));
+        $fName = htmlspecialchars(strip_tags($_POST['fname']));
+        $photo = "123";
+        //$photo = htmlspecialchars(strip_tags($_POST['photo']));
         $email = htmlspecialchars(strip_tags($_POST['email']));
-        $pass1 = htmlspecialchars(strip_tags($_POST['pass1']));
-        $pass2 = htmlspecialchars(strip_tags($_POST['pass2']));
-        $token = $_POST['token'];
+        $pass1 = htmlspecialchars(strip_tags($_POST['password1']));
+        $pass2 = htmlspecialchars(strip_tags($_POST['password2']));
+        $token = $_POST['g-recaptcha-response'];
         
         //! Validate Email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -32,8 +33,7 @@ if($_POST){
         //! Validate Password
         if(strlen($pass1)<3){
             $errPass = "Minimum 10 characters.";
-        }
-        else{
+        }else{
             
             $uppercase = preg_match('@[A-Z]@', $pass1);
             $lowercase = preg_match('@[a-z]@', $pass1);
@@ -50,7 +50,7 @@ if($_POST){
         $url = "https://www.google.com/recaptcha/api/siteverify";
 		$data = [
 			'secret' => "6LfpowEdAAAAALbwY7G0Mzh7N-ow-4DVAMIXwIX1",
-			'response' => $_POST['token'],
+			'response' => $token,
 			// 'remoteip' => $_SERVER['REMOTE_ADDR']
 		];
 
@@ -80,14 +80,12 @@ if($_POST){
             );
         //! After Validate
         if(@$err['errEmail'] != null  || @$err['errPass'] != null || @$err['errCaptcha'] != null){
-            
             echo json_encode(@$err);
-        }
-        else{
+        }else{
             //! Instantiate user object
             $user =  new user($db);
-            $user->fName = $fName; 
-            $user->lName = $lName;
+            $user->fName = $fName;
+            $user->photo = $photo;
             $user->email = $email;
             $user->pass = password_hash($pass1, PASSWORD_ARGON2I);
 
@@ -121,52 +119,27 @@ if($_POST){
             $user->email = $email;
             $result = $user->select_user();
             if($result){
-
                 //! verify password 
                 $hash = $result['uPass'];
                 if (password_verify($pass, $hash)) {
-
-                    //! opt operation 
-                    $otp = rand(000000,999999);
-                    $uId = $result['uEmail'];
-                    $user->uId = $uId;
-                    $user->otp = $otp;
-                    $user->createdAt = date("y-m-d H:i:s");
-                    //! insert and validate the insert operation
-                    if($user->insert_otp()){
-                        if(send_mail($otp,$uId)){
-
-                            echo json_encode(
-                                array(
-                                    "message"=> "success",
-                                    "uId" => $uId
-                                    )
-                                );
-                        }
-                        else{
-                            echo json_encode(array(
-                                "message"=> "Unable to send Mail!!!"
-                            ));
-                        }
-                    }
-                    else{
-                        echo json_encode(array(
-                            "message"=> "error"
-                        ));
-                    }
-
-                } 
+                    $_SESSION['email'] = $result['uEmail'];
+                    echo json_encode(array(
+                        "message" => "success",
+                        "email" => $user->email
+                    ), JSON_THROW_ON_ERROR);
+                    include './sessions.php';
+                }
                 else {
 
                     echo json_encode(array(
-                        "message"=> "Invalid UserId or password!!!"
+                        "message"=> "Invalid Email or password!!!"
                     ));
 
                 }
             }
             else{
                 echo json_encode(array(
-                    "message"=> "Invalid UserId or password!!!"
+                    "message"=> "Invalid Email or password!!!"
                 ));
             }
         }
@@ -176,7 +149,6 @@ if($_POST){
      if($_POST['action']=="verify otp"){
 
         $otp = htmlspecialchars(strip_tags($_POST['otp']));
-        $uid = htmlspecialchars(strip_tags($_POST['uId']));
         if($otp && $otp !=""){
 
             //! Instantiate user
@@ -184,8 +156,8 @@ if($_POST){
             
             //! set properties
             $user->otp = $otp;
-            $user->uId = $uid;
-            
+            $user->email = $_SESSION['email'];
+
             //! check otp
             $result = $user->validate_otp();
             if($result){
@@ -201,39 +173,66 @@ if($_POST){
                                 "message"=>"Otp Expired!!!"
                                 )
                             );
-                            $user->update_otp();
-                        }   
-                        else{
-                            echo json_encode(
-                                array(                        
-                                    "message"=>"success!!!"
-                                    )
-                                );
-                                $user->update_otp();
-                                
-                                $_SESSION['userId'] = $uid;
-                                include './sessions.php';
-                                 
-
-                            }
-                        }
-                        else{
-
-                            echo json_encode(
-                                array(                        
-                                    "message"=>"Otp Expired!!!"
-                                    )
-                                );
-                        }
+                        $user->update_otp();
+                    } else{
+                        echo json_encode(array(
+                            "message" => "success!!!"
+                        ), JSON_THROW_ON_ERROR);
+                        $user->update_otp();
+                        //TODO user->setkey();
+                        //$_SESSION['userId'] = $uid;
+                        include './sessions.php';
                     }
-                    else{
-                        echo json_encode(
-                            array(                        
-                                "message"=>"Invalid Otp!!!"
-                                )
-                            );
+                } else{
+                    echo json_encode(
+                        array(
+                            "message"=>"Otp Expired!!!"
+                            )
+                        );
+                }
+            } else{
+                echo json_encode(
+                    array(
+                        "message"=>"Invalid Otp!!!"
+                        )
+                    );
+            }
+        }
+    }
+
+     //Send mail
+    if($_POST['action'] === "send_mail"){
+        $email = $_SESSION['email'];
+        if($email) {
+            $user = new user($db);
+            $user->email = $email;
+            $result = $user->select_user();
+            if ($result) {
+                $user->otp = random_int(000000, 999999);
+                $user->createdAt = date("y-m-d H:i:s");
+                //! insert and validate the insert operation
+                if ($user->insert_otp()) {
+                    if (send_mail($user->otp, $user->email)) {
+                        echo json_encode(array(
+                            "message" => "Mail send",
+                            "email" => $user->email
+                        ), JSON_THROW_ON_ERROR);
+                        include './sessions.php';
+                    } else {
+                        echo json_encode(array(
+                            "message" => "Unable to send Mail!!!"
+                        ), JSON_THROW_ON_ERROR);
                     }
-                            
+                } else {
+                    echo json_encode(array(
+                        "message" => "error"
+                    ), JSON_THROW_ON_ERROR);
+                }
+            } else {
+                echo json_encode(array(
+                    "message" => "No user in db?"
+                ), JSON_THROW_ON_ERROR);
+            }
         }
     }
 

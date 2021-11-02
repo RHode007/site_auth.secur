@@ -38,13 +38,14 @@ try {
           url: "./controller/c_users.php",
           data: data,
           success: function(response) {
-              console.log(response);
+              //console.log(response);
               data = JSON.parse(response);
-              console.log(response);
+              //console.log(response);
               if (data['message'] == "success") {
-                  document.getElementById('uId').value = data['uId'];
+                  //document.getElementById('email').value = data['email'];
                   lsRememberMe(rmCheck, email);
-                  $('#otp').modal('show')
+                  window.location.href = 'index.php';
+                  //$('#otp').modal('show')
               } else {
                   eStatus.innerHTML = data['message'];
               }
@@ -74,15 +75,37 @@ try {
 
   //! otp form variable
   var oForm = document.getElementById('otpForm');
+
+    function sendMail() {
+        const oState = document.getElementById('oEstate');
+        let data = [];
+        $.ajax({
+            type: "POST",
+            url: "./controller/c_users.php",
+            data: {"action": "send_mail"},
+            success: function(response) {
+                data = JSON.parse(response);
+                if (data['message'] == "Mail send") {
+                    oState.innerHTML = data['message'];
+                } else {
+                    oState.innerHTML = data['message'];
+                    setTimeout(() => {
+                        window.location.href = 'index.php';
+                    }, 3000);
+                }
+            }
+        })
+    }
+
   //! on submit otp form
-  oForm.onsubmit = (e) => {
+    oForm.onsubmit = (e) => {
       e.preventDefault();
 
       //! form variable
       var oBtn = document.getElementById('sCodeBt');
       var oCode = document.getElementById('sCodeIn');
       var oState = document.getElementById('oEstate');
-      var uId = document.getElementById('uId');
+      //var uId = document.getElementById('uId');
       //! form data 
       var data = [];
       if (oCode.value) {
@@ -90,7 +113,7 @@ try {
           data = {
               "action": "verify otp",
               "otp": oCode.value,
-              "uId": uId.value
+              //"uId": uId.value
           }
 
           $.ajax({
@@ -123,12 +146,12 @@ try {
 try {
   var regForm = document.getElementById('regForm')
 
-  regForm.onsubmit = (e) => {
-      e.preventDefault();
+  regForm.onsubmit1 = (e) => {
+      //e.preventDefault();
 
       //? variables 
       var fname = document.getElementById('rFname');
-      var lname = document.getElementById('rLname');
+      var photo = document.getElementById('rPhoto');
       var email = document.getElementById('rEmail');
       var rPass1 = document.getElementById('rPassword1');
       var rPass2 = document.getElementById('rPassword2');
@@ -159,10 +182,10 @@ try {
       } else {
           fname.classList.add('is-valid')
       }
-      if (lname.value) {
-          lname.classList.add('is-valid')
+      if (photo.value) {
+          photo.classList.add('is-valid')
       } else {
-          lname.classList.add('is-valid')
+          photo.classList.add('is-valid')
       }
 
       //! array of form data
@@ -171,7 +194,7 @@ try {
       data = {
           "action": "registration",
           "fName": fname.value,
-          "lName": lname.value,
+          "photo": photo.value,
           "email": email.value,
           "pass1": rPass1.value,
           "pass2": rPass2.value,
@@ -247,3 +270,26 @@ try {
 } catch (error) {
   console.log(error);
 }
+
+//Class sort table_sort
+document.addEventListener('DOMContentLoaded', () => {
+
+    const getSort = ({ target }) => {
+        const order = (target.dataset.order = -(target.dataset.order || -1));
+        const index = [...target.parentNode.cells].indexOf(target);
+        const collator = new Intl.Collator(['en', 'ru'], { numeric: true });
+        const comparator = (index, order) => (a, b) => order * collator.compare(
+            a.children[index].innerHTML,
+            b.children[index].innerHTML
+        );
+
+        for(const tBody of target.closest('table').tBodies)
+            tBody.append(...[...tBody.rows].sort(comparator(index, order)));
+
+        for(const cell of target.parentNode.cells)
+            cell.classList.toggle('sorted', cell === target);
+    };
+
+    document.querySelectorAll('.table_sort thead').forEach(tableTH => tableTH.addEventListener('click', () => getSort(event)));
+
+});

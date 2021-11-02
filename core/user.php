@@ -6,7 +6,7 @@
 
         //! User Properties
         public $id;
-        public $lName;
+        public $photo;
         public $fName;
         public $email;
         public $pass;
@@ -21,14 +21,14 @@
         public function create_user(){
 
             //! Create query
-            $query ='INSERT INTO users (uFirstName,uLastName,uEmail, uPass) VALUES (:fName, :lName, :email, :pass)';
+            $query ='INSERT INTO users (uFirstName,uPhoto,uEmail, uPass) VALUES (:fName, :photo, :email, :pass)';
 
             //! Prepare Statement 
             $stmt = $this->conn->prepare($query);
 
             //! Bind
             $stmt->bindParam(':fName',$this->fName);
-            $stmt->bindParam(':lName',$this->lName);
+            $stmt->bindParam(':photo',$this->photo);
             $stmt->bindParam(':email',$this->email);
             $stmt->bindParam(':pass',$this->pass);
             //! execute query
@@ -67,7 +67,7 @@
         
         //! Select User 
         public function select_user(){
-             $query ='SELECT * FROM users WHERE uEmail = :email';
+             $query ='SELECT uId,uFirstName,uEmail,uPass,uPhoto,uKey FROM users WHERE uEmail = :email';
              $stmt = $this->conn->prepare($query);
              $stmt->bindParam(':email',$this->email);
              $stmt->execute();
@@ -80,30 +80,30 @@
             }
         }
 
-       /* public function select_users(){
-            $query ='SELECT * FROM users';
+        public function select_users(){
+            $query ='SELECT uId,uFirstName,uEmail,uPhoto FROM users';
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchall(PDO::FETCH_ASSOC);
             if($result){
                 return $result;
             }
             else{
                 return false;
             }
-        }*/
+        }
 
         //! insert otp
         public function insert_otp(){
             
             //! Create query
-            $query ="INSERT INTO `otp` (`uId`, `otp`, `createdAt`) VALUES (:id, :otp,:createdAt)";
+            $query ="INSERT INTO `otp` (`uEmail`, `otp`, `createdAt`) VALUES (:email, :otp,:createdAt)";
            
             //! Prepare Statement 
             $stmt = $this->conn->prepare($query);
            
             //! Bind
-            $stmt->bindParam(':id',$this->uId);
+            $stmt->bindParam(':email',$this->email);
             $stmt->bindParam(':otp',$this->otp);
             $stmt->bindParam(':createdAt',$this->createdAt);
             //! execute query 
@@ -113,20 +113,19 @@
              else{
                  return $stmt->error;
              }
-             echo uId;
         }
         
         //! validate otp
         public function validate_otp(){
             
             //! Create query
-            $query ="SELECT * FROM `otp` WHERE `uId` = :id AND `otp`= :otp";
+            $query ="SELECT * FROM `otp` WHERE `uEmail` = :email AND `otp`= :otp";
            
             //! Prepare Statement 
             $stmt = $this->conn->prepare($query);
            
             //! Bind
-            $stmt->bindParam(':id',$this->uId);
+            $stmt->bindParam(':email',$this->email);
             $stmt->bindParam(':otp',$this->otp);
             
             //! execute query 
@@ -143,13 +142,13 @@
          public function update_otp(){
             
             //! Create query
-            $query ="UPDATE `otp` SET `isExpired` = 1 WHERE `uId` = :id AND `otp`= :otp";
+            $query ="UPDATE `otp` SET `isExpired` = 1 WHERE `uEmail` = :email AND `otp`= :otp";
            
             //! Prepare Statement 
             $stmt = $this->conn->prepare($query);
            
             //! Bind
-            $stmt->bindParam(':id',$this->uId);
+            $stmt->bindParam(':email',$this->email);
             $stmt->bindParam(':otp',$this->otp);
             
             //! execute query 

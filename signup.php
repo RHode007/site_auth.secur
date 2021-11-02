@@ -1,6 +1,6 @@
 <?php
 session_start();
-if(@$_SESSION["userId"]){
+if(@$_SESSION["Email"]){
   header("location: home.php");
   exit;
 }
@@ -28,28 +28,27 @@ else{
           <form action="" class="" id="regForm">
             <div class="form-group">
               <label for="">First Name</label>
-              <input type="text" class="form-control" name="fname" id="rFname" aria-describedby="emailHelpId" placeholder="Enter your First Name" required>
+              <input type="text" class="form-control" name="fname" id="rFname" aria-describedby="emailHelpId" placeholder="Enter your Name">
             </div>
             <div class="form-group">
-              <label for="">Last Name</label>
-              <input type="text" class="form-control" name="lname" id="rLname" aria-describedby="emailHelpId" placeholder="Enter your Last Name" required>
+              <label for="">Photo</label>
+              <input type="text" class="form-control" name="photo" id="rPhoto" aria-describedby="emailHelpId" placeholder="Not realized" value="123" required disabled>
             </div>
             <div class="form-group">
-              <label for="">Email</label>
-              <input type="email" class="form-control" name="email" id="rEmail" aria-describedby="emailHelpId" placeholder="Enter your Email" required>
-              <div class="invalid-feedback" id="eEstate">
-                
+                  <label for="">Email</label>
+                  <input type="email" class="form-control" name="email" id="rEmail" aria-describedby="emailHelpId" placeholder="Enter your Email" required>
+                  <div class="invalid-feedback" id="eEstate">
                 </div>
               </div>
               <div class="form-group">
                 <label for="">Password</label>
-              <input type="password" minlength="3" class="form-control" name="password1" id="rPassword1" placeholder="password" required>
-              <small id="emailHelpId" class="form-text text-muted">
-                Minimum 10 characters. Must include uppercase, lowercase, and number(s).
-              </small>
-              <div class="invalid-feedback " id="ePstate1">
+                  <input type="password" minlength="3" class="form-control" name="password1" id="rPassword1" placeholder="password" required>
+                  <small id="emailHelpId" class="form-text text-muted">
+                    Minimum 10 characters. Must include uppercase, lowercase, and number(s).
+                  </small>
+                  <div class="invalid-feedback " id="ePstate1">
                 
-                </div>
+                  </div>
               </div>
               <div class="form-group">
                 <div id="rCaptch"></div>
@@ -68,13 +67,14 @@ else{
                 <div class="rCaptcha"></div>
             </div>
             <div class="form-group">
-              <input type="submit" value="Submit" class="btn btn-success" name="Submit"><span class="ml-3 h5 text-danger"id="Estatus"></span>
+                <button type="submit" class="btn btn-primary">Отправить</button>
+<!--                <input type="submit" value="Submit" class="btn btn-success" name="Submit"><span class="ml-3 h5 text-danger" id="Estatus"></span>-->
             </div> 
-            <div class="form-group">  
+            <div class="form-group">
               <span class="text-primary mr-5">Already registered</span>
-              <a href="index.php" class="ml-3">Log In</a>            
+              <a href="index.php" class="ml-3">Log In</a>
             </div>
-
+              <input type="hidden" name="action" value="registration">
           </form>
         </div>
         
@@ -97,11 +97,13 @@ else{
   }
    
   </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js" integrity="sha256-sPB0F50YUDK0otDnsfNHawYmA5M0pjjUf4TvRJkGFrI=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
     <script src="./js/main.js"></script>
+    <script src="./js/validate.js"></script>
 </body>
 
 </html>

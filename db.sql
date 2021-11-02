@@ -53,7 +53,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
                          `uId` int(11) NOT NULL AUTO_INCREMENT,
                          `uFirstName` varchar(255) NOT NULL,
-                         `uLastName` varchar(255) NOT NULL,
+                         `uPhoto` varchar(255) NOT NULL,
                          `uEmail` varchar(255) NOT NULL,
                          `uPass` varchar(128) NOT NULL,
                          `uCreatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
